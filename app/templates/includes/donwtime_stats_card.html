@@ -1,0 +1,40 @@
+<div class="card shadow-lg w-96">
+    <div class="card-body">
+        <h2 class="card-title">Downtime stats</h2>
+        <table class="table table-xs">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Systems</th>
+                    <th>{{ down_systems }}</th>
+                </tr>
+                <tr>
+                    <th>Entries</th>
+                    <th>{{ down_entries }}</th>
+                </tr>
+                <tr>
+                    <th>Total time (hours)</th>
+                    <th>{{ down_time.time|floatformat:0 }}</th>
+                </tr>
+                <tr>
+                    <th>Avg down time (hours)</th>
+                    <th>{{ down_avg.time|floatformat:0 }}</th>
+                </tr>
+                <tr>
+                    <th>Max down time (hours)</th>
+                    <th>{{ down_max.time|floatformat:0 }}</th>
+                </tr>
+                <tr>
+                    <th>Min down time (hours)</th>
+                    <th>{{ down_min.time|floatformat:0 }}</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

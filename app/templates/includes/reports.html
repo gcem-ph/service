@@ -1,0 +1,104 @@
+
+<form action="{% url 'reports' service_call_id=call.service_call_id %}" method="POST"
+    enctype="multipart/form-data" class="dropzone">
+    {% csrf_token %}
+
+    <div class="bg-base-200 p-8 text-center rounded-lg border-dashed border-2 border-gray-300"
+        id="dropzone">
+        <label for="fileInput" class="cursor-pointer flex flex-col items-center space-y-2">
+            <svg class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 20 16">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+            </svg>
+            <span class="text-gray-600">Drag and drop your report here</span>
+            <span class="text-gray-500 text-sm">(or click to select)</span>
+            <div class="mt-6 text-center" id="fileList"></div>
+        </label>
+        <input type="file" id="fileInput" class="hidden" name="{{ report_form.service_report.html_name }}" multiple>
+        <div class="mt-5 text-center">
+            <button type="submit"
+                class="btn btn-sm btn-accent">Upload</button>
+        </div>
+    </div>
+</form>
+
+<h5 class="mb-2 mt-5">Reports</h5>
+<div class="relative overflow-x-auto rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right table-xs">
+        <thead class="bg-base-200">
+            <tr>
+                <th scope="col" class="px-6 py-3">Filename</th>
+                <th scope="col" class="px-6 py-3">Uploaded</th>
+                <th scope="col" class="px-6 py-3">
+                    <span class="sr-only">View</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">{{ report.filename }}</td>
+                <td class="px-6 py-4">{{ report.uploaded|date:'d-m-Y' }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="{{ report.service_report.url }}"
+                        class="btn btn-xs btn-ghost">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- component -->
+
+
+
+<script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-blue-500', 'border-2');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-blue-500', 'border-2');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-blue-500', 'border-2');
+
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        handleFiles(files);
+    });
+
+    function handleFiles(files) {
+        fileList.innerHTML = '';
+
+        for (const file of files) {
+            const listItem = document.createElement('div');
+            listItem.textContent = `${file.name} (${formatBytes(file.size)})`;
+            fileList.appendChild(listItem);
+        }
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+</script>

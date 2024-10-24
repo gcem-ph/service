@@ -1,0 +1,109 @@
+<form action="{% url 'new_call' %}" method="POST" class="mb-6 w-full">
+    {% csrf_token %}
+    <!-- Title -->
+    <div class="flex mb-6 w-full">
+        <div class="w-full">
+            <label class="block mb-2 font-medium"
+                for="{{ call_form.title.id_for_label }}">{{ call_form.title.label }}</label>
+            <input type="text" placeholder="Title"
+                class="input input-bordered focus:ring-cyan-400 focus:ring-2 focus:outline-none w-full"
+                name="{{ call_form.title.html_name }}" id="{{ call_form.title.id_for_label }}" value=""
+                placeholder="{{ call_form.title.label }}" required/>
+        </div>
+    </div>
+    <!-- Dates & Call ID-->
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="">
+            <label for="{{ call_form.call_id.id_for_label }}" class="block mb-2 text-md font-medium">{{ call_form.call_id.label }}</label>
+            <input id="{{ call_form.call_id.id_for_label }}" class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none"
+            type="text" name="{{ call_form.call_id.html_name }}" placeholder="{{ call_form.call_id.label }}" value="">
+        </div>
+        <div class="">
+            <label for="{{ call_form.created.id_for_label }}" class="block mb-2 text-md font-medium">{{ call_form.created.label }}</label>
+            <input id="datepicker{{ call.pk }}{{ call_form.created.id_for_label }}" name="{{ call_form.created.html_name}}" value=""
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" placeholder="dd-mm-yyyy" required>
+        </div>
+        <div class="">
+            <label for="{{ call_form.opened.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ call_form.opened.label }}</label>
+            <input id="datepicker{{ call.pk }}{{ call_form.opened.id_for_label }}" name="{{ call_form.opened.html_name}}"
+                value=""
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" placeholder="dd-mm-yyyy">
+        </div>
+        <div class="">
+            <label for="{{ call_form.closed.id_for_label }}" class="block mb-2 text-md font-medium">{{ call_form.closed.label }}</label>
+            <input id="datepicker{{ call.pk }}{{ call_form.closed.id_for_label }}" name="{{ call_form.closed.html_name}}"
+                value=""
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none"
+                placeholder="dd-mm-yyyy">
+        </div>
+    </div>
+    <!-- Description -->
+    <div class="mb-6">
+        <label class="block mb-2 text-md font-medium"
+            for="{{ call_form.description.id_for_label }}">{{ call_form.description.label }}</label>
+        <textarea rows="4"
+            class="textarea textarea-bordered block p-2.5 w-full text-sm  rounded-lg border focus:ring-cyan-400 focus:border-cyan-400 focus:ring-2 focus:outline-none"
+            placeholder="{{ call_form.description.label }}" name="{{ call_form.description.html_name }}"
+            id="{{ call_form.description.id_for_label }}" value="" placeholder="Problem description" required></textarea>
+    </div>
+    <!-- Call details -->
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-1/3">
+            <label for="{{ call_form.equipment.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ call_form.equipment.label }}</label>
+            <select id="{{ call_form.equipment.id_for_label }}" name="{{ call_form.equipment.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" required>
+                {% for widget in call_form.equipment.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="w-1/3">
+            <label for="{{ call_form.system_part.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ call_form.system_part.label }}</label>
+            <select id="{{ call_form.status.id_for_label }}" name="{{ call_form.system_part.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" required>
+                {% for widget in call_form.system_part.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="w-1/3">
+            <label for="{{ call_form.status.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ call_form.status.label }}</label>
+            <select id="{{ call_form.status.id_for_label }}" name="{{ call_form.status.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" required>
+                {% for widget in call_form.status.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <!-- Buttons -->
+    <div class="flex justify-end gap-4">
+        <button for="new_call_form" type="submit" class="btn btn-sm btn-accent">Save</button>
+        <label for="my_modal" class="btn btn-sm">Close</label>
+    </div>
+</form>
+
+
+
+<script>
+
+    configs_call = {
+        dateFormat: "d-m-Y",
+        allowInput: true,
+        time_24hr: true,
+        minuteIncrement: 1,
+        defaultHour: new Date().getHours(),
+        defaultMinute: new Date().getMinutes(),
+    };
+
+    $('#datepicker{{ call.pk }}{{ call_form.created.id_for_label }}').flatpickr(configs_call);
+    $('#datepicker{{ call.pk }}{{ call_form.opened.id_for_label }}').flatpickr(configs_call);
+    $('#datepicker{{ call.pk }}{{ call_form.closed.id_for_label }}').flatpickr(configs_call);
+
+</script>
+
+

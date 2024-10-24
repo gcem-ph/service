@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "chart.js": "^4.4.5",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "flatpickr": "^4.6.13",
+    "htmx.org": "^2.0.3",
+    "jquery": "^3.7.1"
+  },
+  "scripts": {
+    "tailwind-watch": "tailwindcss -i input.css -o ../css/tailwind.css --watch",
+    "tailwind-build": "tailwindcss -i input.css -o ../css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "daisyui": "^4.12.13",
+    "tailwindcss": "^3.4.14"
+  }
+}

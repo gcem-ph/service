@@ -1,0 +1,282 @@
+{% extends "navigator.html" %}
+{% load static %}
+{% load compress %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+
+<div class="grid xl:grid-cols-3 grid-cols-1 mt-24 justify-items-center px-24 gap-8">
+    <div class="card shadow-lg w-full">
+        <div class="card-body">
+            <h2 class="card-title">Calls stats</h2>
+            <table class="table table-xs">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Total calls</th>
+                        <th>{{ total_calls }}</th>
+                    </tr>
+                    <tr>
+                        <th>Currently opened</th>
+                        <th>{{ calls_opened }}</th>
+                    </tr>
+                    <tr>
+                        <th>Currently closed</th>
+                        <th>{{ calls_closed }}</th>
+                    </tr>
+                    <tr>
+                        <th>Avg closing time (days)</th>
+                        <th>{{ call_avg_closing_time.avg.days }}</th>
+                    </tr>
+                    <tr>
+                        <th>Max closing time (hours)</th>
+                        <th>{{ call_max_closing_time.max.days }}</th>
+                    </tr>
+                    <tr>
+                        <th>Min closing time (hours)</th>
+                        <th>{{ call_min_closing_time.min.days }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+    <div class="card shadow-lg w-full">
+        <div class="card-body">
+            <h2 class="card-title">Downtime stats</h2>
+            <table class="table table-xs">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Systems</th>
+                        <th>{{ down_systems }}</th>
+                    </tr>
+                    <tr>
+                        <th>Entries</th>
+                        <th>{{ down_entries }}</th>
+                    </tr>
+                    <tr>
+                        <th>Total time (hours)</th>
+                        <th>{{ down_time.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Avg down time (hours)</th>
+                        <th>{{ down_avg.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Max down time (hours)</th>
+                        <th>{{ down_max.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Min down time (hours)</th>
+                        <th>{{ down_min.time|floatformat:0 }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+    <div class="card shadow-lg w-full">
+        <div class="card-body">
+            <h2 class="card-title">Up with issues stats</h2>
+            <table class="table table-xs">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Systems</th>
+                        <th>{{ up_with_issues_systems }}</th>
+                    </tr>
+                    <tr>
+                        <th>Entries</th>
+                        <th>{{ up_with_issues_entries }}</th>
+                    </tr>
+                    <tr>
+                        <th>Total time (hours)</th>
+                        <th>{{ up_with_issues_time.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Avg down time (hours)</th>
+                        <th>{{ up_with_issues_avg.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Max down time (hours)</th>
+                        <th>{{ up_with_issues_max.time|floatformat:0 }}</th>
+                    </tr>
+                    <tr>
+                        <th>Min down time (hours)</th>
+                        <th>{{ up_with_issues_min.time|floatformat:0 }}</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+</div>
+<div class="h-48">
+    <div class="grid xl:grid-cols-2 grid-cols-1 gap-10 px-24 mt-10 justify-items-stretch">
+        <div class="card shadow-lg w-full justify-self-center p-10">
+            <canvas id="chart"></canvas>
+        </div>
+        <div class="card shadow-lg w-full justify-self-center p-10">
+            <canvas id="chart2"></canvas>
+        </div>
+    </div>
+</div>
+
+    
+
+    
+
+
+
+
+<div class="flex flex-col flex-shrink-0 flex-grow-0 h-1/2 w-1/2">
+    
+</div>
+
+<div class="flex flex-col flex-shrink-0 flex-grow-0 h-1/2 w-1/2">
+    <canvas id="chart2" width="100" height="100"></canvas>
+</div>
+
+{{ downtime_by_microscope|json_script:'downtime_by_microscope' }}
+{{ downtime_by_microscope_by_part|json_script:'downtime_by_microscope_by_part' }}
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    var data = JSON.parse(document.getElementById('downtime_by_microscope').textContent);
+    let ctx = document.getElementById("chart").getContext("2d");
+    let chart = new Chart(ctx, {
+
+        type: 'bar',
+
+        data: data,
+        options: {
+            title: {
+                display: true,
+                text: 'Downtime by Microscope'
+            },
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Microscope'
+                    },
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Hours'
+                    },
+                },
+            },    
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Downtime by Microscope'
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            const datasetLabel = tooltipItem.dataset.label || '';
+                            const value = Math.round( tooltipItem.raw );
+                            const days = Math.round(value / 24);
+
+                            // Customize for 'down' data
+                            if (datasetLabel === 'down') {
+                                return `Down: ${value} hours or ${days} days`;
+                            } else if (datasetLabel === 'up-with-issues') {
+                                return `Up with Issues: ${value} hours or ${days} days`;
+                            }
+                        }
+                    },
+                },
+            },
+        },
+    });
+
+    var data2 = JSON.parse(document.getElementById('downtime_by_microscope_by_part').textContent);
+        let ctx2 = document.getElementById("chart2").getContext("2d");
+        let chart2 = new Chart(ctx2, {
+
+            type: 'bar',
+
+            data: data2,
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Microscope'
+                        },
+                    },
+                    y: { stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Hours'
+                        },
+                    },
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Downtime by Microscope/Parts'
+                    },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                const datasetLabel = tooltipItem.dataset.label || '';
+                                const value = Math.round(tooltipItem.raw);
+                                const days = Math.round(value / 24);
+
+                                // Customize for 'down' data
+                                if (datasetLabel === 'down') {
+                                    return `Down: ${value} hours or ${days} days`;
+                                } else if (datasetLabel === 'up-with-issues') {
+                                    return `Up with Issues: ${value} hours or ${days} days`;
+                                }
+                            }
+                        },
+                    },
+                    // datalabels: {
+                    //     anchor: 'center',
+                    //     align: 'center',
+                    //     rotation: 270,
+                    //     dispaly: 'auto',
+                    //     formatter: (value, context) => {
+                    //         // Display the stack name instead of value
+                    //         console.log(context.dataset.label)
+                    //         return context.dataset.label.split(' ')[1]; // Adjust this line based on your label structure
+                    //     },
+                    //     // color: 'white', // Change color of data label text
+                    // },
+                },
+            },
+            // plugins: [ChartDataLabels],
+        });
+</script>
+
+{% endblock %}

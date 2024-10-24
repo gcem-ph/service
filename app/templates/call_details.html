@@ -1,0 +1,197 @@
+{% extends "navigator.html" %}
+{% load static %}
+{% load compress %}
+
+{% block styles %}{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-center">
+    
+    <div class="pt-6 px-10">
+        {% include 'includes/messages.html' %}
+        <div class="w-full grid grid-cols-1 mb-3">
+            <div class="flex flex-row justify-between items-center">
+                <h3 class="text-xl font-bold">{{ call.title }} {% if call.updated %} - Last update: {{ call.updated }} by {{ user.first_name }}{% endif %}</h3>
+                <a href="{% url 'calls' %}"><button class="btn btn-ghost btn-sm">Close</button></a>
+            </div>
+            
+        </div>
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl sm:text-3xl leading-none font-bold" style="color: {{ call.status.color }};">{{ call.status }}</span>
+                        <h3 class="text-base font-normal text-gray-500">Current status</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        {% if days_to_solve_issue %}
+                        <span class="text-2xl sm:text-3xl leading-none font-bold">{{ days_to_solve_issue }}</span>
+                        <h3 class="text-base font-normal text-gray-500">Days to solve the issue</h3>
+                        {% else %}
+                        <span class="text-2xl sm:text-3xl leading-none font-bold">{{ days_since_issues_opened }}</span>
+                        <h3 class="text-base font-normal text-gray-500">Days since issues was reported</h3>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 space-y-2">
+                        <span class="text-2xl sm:text-xl leading-none font-bold">{{ last_worked_call.engineer }}</span>
+                        <h3 class="text-base font-normal text-gray-500">Last worked on the call</h3>
+                    </div>
+                </div>
+            </div>
+            <a href="#downtimes">
+                <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl sm:text-3xl leading-none font-bold">{{ engineers_assigned }}</span>
+                            <h3 class="text-base font-normal text-gray-500">Engineers assigned to call</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#downtimes">
+                <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl sm:text-3xl leading-none font-bold">{{ downtime_entries }}</span>
+                            <h3 class="text-base font-normal text-gray-500">Downtime entries</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#reports">
+                <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl sm:text-3xl leading-none font-bold">{{ reports_entries }}</span>
+                            <h3 class="text-base font-normal text-gray-500">Reports</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4">
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4  2xl:col-span-2">
+                <h3 class="text-xl font-bold mb-2 items-start">Call details</h3>
+                <div class="flex items-center w-full mb-4">
+                    {% include 'includes/call.html' %}
+                </div>
+                <div id="main-chart"></div>
+            </div>
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4 ">
+                <div class="flex flex-col flex-shrink-0 flex-grow-0">
+                    {% if downtime_hours.time.days or up_with_issues_hours.time.days or engineer_time %}
+                    <div class="">
+                        <h3 class="text-xl font-bold">Downtime vs Up with Issues</h3>
+                        <canvas id="chart" width="200" height="200"></canvas>
+                    </div>
+                    <div class="mt-10 ">
+                        <h3 class="text-xl font-bold">Hours spent on call</h3>
+                        <canvas id="chart2" width="200" height="200"></canvas>
+                    </div>
+                    {% else %}
+                    <h3 class="text-xl mt-5 text-gray-500">No data yet</h3>
+                    {% endif %}
+                </div>
+            </div>
+           
+        </div>
+        
+        <div class="grid grid-cols-1 xl:grid-cols-3 xl:gap-4 my-4">
+            <div class="card shadow-lg rounded-lg mb-4 p-4 sm:p-4 col-span-2" id="downtimes">
+                <h3 class="text-xl leading-none font-bold mb-10">Downtime</h3>
+                {% include 'includes/downtimes.html' %}
+            </div>
+            <div class="card shadow-lg rounded-lg p-4 sm:p-4 xl:p-4" id="reports">
+                <h3 class="text-xl leading-none font-bold mb-10">Reports</h3>
+                {% include 'includes/reports.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+
+<script>
+    $('#alert').delay(4000).fadeOut();
+</script>
+
+
+{{ engineer_time|json_script:"my_array" }}
+<script>
+    let ctx = document.getElementById("chart").getContext("2d");
+
+    let chart = new Chart(ctx, {
+
+        type: 'doughnut',
+
+        data: {
+            labels: [
+                'Downtime day:', 
+                'Up with Issues days:',
+            ],
+            datasets: [{
+                data: ['{{ downtime_hours.time.days }}', '{{ up_with_issues_hours.time.days }}'],
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 205, 86)'
+                ],
+                hoverOffset: 4
+            }]
+        },
+
+    });
+
+    let ctx2 = document.getElementById("chart2").getContext("2d");
+
+    var engineer_time = JSON.parse(document.getElementById('my_array').textContent);
+    var engineer = engineer_time.map(engineer => (engineer.engineer))
+    var time = engineer_time.map(time => (time.time))
+
+    let chart2 = new Chart(ctx2, {
+
+        type: 'polarArea',
+
+        data: {
+            labels: engineer,
+            datasets: [{
+                data: time,
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(75, 192, 192)',
+                    
+                    'rgb(201, 203, 207)',
+                    'rgb(54, 162, 235)'
+                ]
+            }]
+        },
+        options: {     
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(tooltipData) {
+                            labels = tooltipData.label.toString();
+                            values = tooltipData.formattedValue.toString();
+                            days = Math.round(values / 24) ;
+                            return values + ' hours  or ' + days + ' days';
+                        },
+                    },
+                },
+            },
+        },
+    });
+</script>
+
+{% endblock %}

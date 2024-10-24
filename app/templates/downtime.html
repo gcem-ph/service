@@ -1,0 +1,78 @@
+{% load static %}
+{% load compress %}
+
+<form action="{% url 'downtime' downtime_id=downtime.downtime_id %}" method="POST" id="downtime_form">
+    {% csrf_token %}
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-1/2">
+            <label for="{{ downtime_form.start.id_for_label }}" class="block mb-2 text-md font-medium">Start</label>
+            <input id="datepicker{{ service_call.pk }}{{ downtime_form.start.id_for_label }}" name="{{ downtime_form.start.html_name }}" 
+                value="{{ downtime_form.start.value|date:'d-m-Y H:i:s' }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 focus:ring-2 focus:outline-none block w-full p-2.5"
+                placeholder="dd-mm-yyyy" required>
+        </div>
+        <div class="w-1/2">
+            <label for="{{ downtime_form.end.id_for_label }}"
+                class="block mb-2 text-md font-medium">End</label>
+            <input  id="datepicker{{ service_call.pk }}{{ downtime_form.end.id_for_label }}" name="{{ downtime_form.end.html_name }}"
+                value="{{ downtime_form.end.value|date:'d-m-Y H:i:s'  }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 focus:ring-2 focus:outline-none block w-full p-2.5"
+                placeholder="dd-mm-yyyy">
+        </div>
+    </div>
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-full">
+            <label for="{{ downtime_form.status.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ downtime_form.status.label }}</label>
+            <select id="{{ downtime_form.status.id_for_label }}" name="{{ downtime_form.status.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" required>
+                {% for widget in downtime_form.status.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="w-full">
+            <label for="{{ downtime_form.engineer.id_for_label }}" class="block mb-2 text-md font-medium">{{ downtime_form.engineer.label }}</label>
+            <select id="{{ downtime_form.engineer.id_for_label }}" name="{{ downtime_form.engineer.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none"
+                required>
+                {% for widget in downtime_form.engineer.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-full">
+            <label class="block mb-2 text-md font-medium"
+                for="{{ downtime_form.notes.id_for_label }}">{{ downtime_form.notes.label }}</label>
+            <textarea rows="4"
+                class="textarea textarea-bordered block p-2.5 w-full text-md"
+                placeholder="{{ downtime_form.notes.label }}" name="{{ downtime_form.notes.html_name }}"
+                id="{{ downtime_form.notes.id_for_label }}">{{ downtime_form.notes.value }}</textarea>
+        </div>
+    </div>
+    <div class="flex flex-rox justify-end items-center space-x-4">
+        <div class="modal-action">
+            <button form="downtime_form" type="submit" class="btn btn-sm btn-accent">Save</button>
+            <label for="my_modal_{{ downtime.downtime_id }}" class="btn btn-sm">Close</label>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    configs = {
+        dateFormat: "d-m-Y H:i:S",
+        enableTime: true,
+        // enableSeconds: true,
+        allowInput: true,
+        time_24hr: true,
+        minuteIncrement: 1,
+        defaultHour: new Date().getHours(),
+        defaultMinute: new Date().getMinutes(),
+    };
+
+    $('#datepicker{{ service_call.pk }}{{ downtime_form.start.id_for_label }}').flatpickr(configs);
+    $('#datepicker{{ service_call.pk }}{{ downtime_form.end.id_for_label }}').flatpickr(configs);
+</script>

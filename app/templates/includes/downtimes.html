@@ -1,0 +1,151 @@
+{% load static %}
+{% load compress %}
+
+
+
+<form action="{% url 'downtimes' service_call_id=call.service_call_id %}" method="POST">
+    {% csrf_token %}
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-1/2">
+            <label for="{{ downtime_form.start.id_for_label }}" class="block mb-2 text-md font-medium">Start</label>
+            <input id="datepicker{{ service_call.pk }}{{ downtime_form.start.id_for_label }}" name="{{ downtime_form.start.html_name }}" 
+                value="{{ downtime_form.start.value|date:'d-m-Y' }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 focus:ring-2 focus:outline-none block w-full p-2.5"
+                placeholder="dd-mm-yyyy" required>
+        </div>
+        <div class="w-1/2">
+            <label for="{{ downtime_form.end.id_for_label }}"
+                class="block mb-2 text-md font-medium">End</label>
+            <input  id="datepicker{{ service_call.pk }}{{ downtime_form.end.id_for_label }}" name="{{ downtime_form.end.html_name }}"
+                value="{{ downtime_form.end.value|date:'d-m-Y'  }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 focus:ring-2 focus:outline-none block w-full p-2.5"
+                placeholder="dd-mm-yyyy">
+        </div>
+    </div>
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-full">
+            <label for="{{ downtime_form.status.id_for_label }}"
+                class="block mb-2 text-md font-medium">{{ downtime_form.status.label }}</label>
+            <select id="{{ downtime_form.status.id_for_label }}" name="{{ downtime_form.status.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none" required>
+                {% for widget in downtime_form.status.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="w-full">
+            <label for="{{ downtime_form.engineer.id_for_label }}" class="block mb-2 text-md font-medium">{{ downtime_form.engineer.label }}</label>
+            <select id="{{ downtime_form.engineer.id_for_label }}" name="{{ downtime_form.engineer.html_name }}"
+                class="input input-bordered text-md rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2.5 focus:ring-2 focus:outline-none"
+                required>
+                {% for widget in downtime_form.engineer.subwidgets %}
+                {{ widget }}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="flex mb-6 justify-between space-x-4 w-full">
+        <div class="w-full">
+            <label class="block mb-2 text-md font-medium"
+                for="{{ downtime_form.notes.id_for_label }}">{{ downtime_form.notes.label }}</label>
+            <textarea rows="4"
+                class="textarea textarea-bordered block p-2.5 w-full text-md"
+                placeholder="{{ downtime_form.notes.label }}" name="{{ downtime_form.notes.html_name }}"
+                id="{{ downtime_form.notes.id_for_label }}">{{ downtime_form.notes.value }}</textarea>
+        </div>
+    </div>
+    <div class="flex justify-end space-x-4">
+        <button type="submit"
+            class="btn btn-sm btn-accent">Add Downtime</button>
+    </div>
+</form>
+
+
+
+<h5 class="mb-2 mt-5 font-semibold">Downtime</h5>
+<div class="relative overflow-x-auto sm:rounded-lg">
+    <table class="w-full text-md text-left rtl:text-right table table-xs">
+        <thead class="bg-base-200">
+            <tr>
+                <th scope="col" class="px-6 py-3">Start</th>
+                <th scope="col" class="px-6 py-3">End</th>
+                <th scope="col" class="px-6 py-3">Duration</th>
+                <th scope="col" class="px-6 py-3">Status</th>
+                <th scope="col" class="px-6 py-3">Engineer</th>
+                <th scope="col" class="px-6 py-3">
+                    <span class="sr-only">Edit</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for downtime in downtimes %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">{{ downtime.start|date:'d-m-Y' }}</td>
+                <td class="px-6 py-4">{{ downtime.end|date:'d-m-Y' }}</td>
+                <td class="px-6 py-4">{{ downtime.duration }}</td>
+                <td class="px-6 py-4">{{ downtime.status }}</td>
+                <td class="px-6 py-4">{{ downtime.engineer }}</td>
+                
+                <td>
+                    <!-- The button to open modal -->
+                    <label for="my_modal_{{ downtime.downtime_id }}" class="btn btn-xs btn-ghost" 
+                    hx-get="{% url 'downtime' downtime_id=downtime.downtime_id %}"
+                    hx-trigger="click"
+                    hx-target="#downtime_form_{{ downtime.downtime_id }}"
+                    hx-swap="innerHTML">Edit</label>
+                    
+                    <!-- Put this part before </body> tag -->
+                    <input type="checkbox" id="my_modal_{{ downtime.downtime_id }}" class="modal-toggle" />
+                    <div class="modal" role="dialog">
+                        <div class="modal-box">
+                            <h3 class="text-lg font-bold">Change downtime for: {{ downtime.service_call.title }}</h3>
+                            <div id="downtime_form_{{ downtime.downtime_id }}"></div>
+                        </div>
+                    </div>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+// install the date picker first
+// https://flatpickr.js.org/instance-methods-properties-elements/
+
+    // const d = document.getElementById('datepicker');
+    // const fp = flatpickr(d, {})
+    
+</script>
+
+
+<script>
+
+    configs = {
+        dateFormat: "d-m-Y H:i:S",
+        enableTime: true,
+        // enableSeconds: true,
+        allowInput: true,
+        time_24hr: true,
+        minuteIncrement: 1,
+        defaultHour: new Date().getHours(),
+        defaultMinute: new Date().getMinutes(),
+    };
+
+    $('#datepicker{{ service_call.pk }}{{ downtime_form.start.id_for_label }}').flatpickr(configs);
+    $('#datepicker{{ service_call.pk }}{{ downtime_form.end.id_for_label }}').flatpickr(configs);
+
+    // options = {
+    //         autoHide: true,
+    //         format: 'dd-mm-yyyy H:i'
+    //     }
+
+    //     $(function () {
+    //         $("#datepicker{{ service_call.pk }}{{ downtime_form.start.id_for_label }}").datepicker(options);
+    //     });
+
+    //     $(function () {
+    //         $("#datepicker{{ service_call.pk }}{{ downtime_form.end.id_for_label }}").datepicker(options);
+    //     });
+
+
+</script>

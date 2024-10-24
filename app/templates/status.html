@@ -1,0 +1,56 @@
+{% extends "navigator.html" %}
+{% load static %}
+{% load compress %}
+
+{% block content %}
+<div class="grid grid-cols-3 mt-24 px-10 justify-items-center gap-6">
+    {% for equipment in context %}
+    <div class="card bg-base-100 w-full shadow-xl m-5">
+        <a href="{% url 'call_details' service_call_id=equipment.id.id %}">
+            <div class="card-body">
+            <div class="w-full flex justify-between">
+                <h1 class="card-title">{{ equipment.equipment }}</h1>
+                <h1 class="font-extrabold text-xl" style="color: {{ equipment.color.color }};">{{ equipment.status.severity }}</h1>
+            </div>
+                {% if equipment.code.code < 10 %} <table class="table table-xs">
+                <thead>
+                    <tr>
+                        <th>Problem</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for call in equipment.calls %}
+                    <tr>
+                        <th>{{ call.title }}</th>
+                        <th>{{ call.status.name }}</th>
+                        <th class="flex justify-end">
+                            {% if call.user_notes %}
+                            <label for="modal_{{ call.pk }}" class="btn btn-xs btn-accent">View</label>
+                            {% endif %}
+                        </th>
+                        <!-- Put this part before </body> tag -->
+                        <input type="checkbox" id="modal_{{ call.pk }}" class="modal-toggle" />
+                        <div class="modal" role="dialog">
+                            <div class="modal-box">
+                                <h3 class="text-lg font-bold">{{ call.title }}</h3>
+                                <p class="py-4">{{ call.user_notes|safe }}</p>
+                            </div>
+                            <label class="modal-backdrop" for="modal_{{ call.pk }}">Close</label>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                {% endif %}
+                <div class="flex justify-end font-thin" style="font-size: 10px;">Last updated: {{ equipment.updated.last }}</div>
+            </div>
+        </a>
+    </div>
+    
+    {% endfor %}
+</div>
+
+{% endblock %}
+

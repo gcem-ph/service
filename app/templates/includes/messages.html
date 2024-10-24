@@ -1,0 +1,6 @@
+{% if messages %}
+    {% for message in messages %}
+        <div role="alert" class="alert" {% if message.tags %} style="background-color: {{ message.tags }};"  {% endif %} id="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+

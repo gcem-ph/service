@@ -1,0 +1,195 @@
+{% extends "navigator.html" %}
+{% load static %}
+{% load compress %}
+
+{% block content %}
+
+<div class="mt-24 mx-10 border rounded-md p-10">
+    <table id="calls-table" class="table compact">
+    <thead>
+        <tr>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    #
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Equipment
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Part Affected
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Title
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Status
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Call ID
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th data-type="date" data-format="MM/DD/YYYY" class="bg-base-100">
+                <span class="flex items-center">
+                    Created
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                        height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th data-type="date" data-format="MM/DD/YYYY" class="bg-base-100">
+                <span class="flex items-center">
+                    Opened
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th data-type="date" data-format="MM/DD/YYYY" class="bg-base-100">
+                <span class="flex items-center">
+                    Closed
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th data-type="date" data-format="MM/DD/YYYY" class="bg-base-100">
+                <span class="flex items-center">
+                    Updated
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                        height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+            <th class="bg-base-100">
+                <span class="flex items-center">
+                    Actions
+                    <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                    </svg>
+                </span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for call in calls %}
+        <tr class="hover">
+            <td>{{ call.service_call_id }}</td>
+            <td>{{ call.equipment }}</td>
+            <td>{{ call.system_part }}</td>
+            <td>{{ call.title }}</td>
+            <td class="font-bold" style="color: {{ call.status.color }};">{{ call.status }}</td>
+            <td>{{ call.call_id }}</td>
+            <td>{{ call.created|date:"d-m-Y" }}</td>
+            <td>{{ call.opened|date:"d-m-Y" }}</td>
+            <td>{{ call.closed|date:"d-m-Y" }}</td>
+            <td>{{ call.updated|date:"d-m-Y" }}</td>
+            <td>
+                <a href="{% url 'call_details' call.service_call_id %}">
+                <button class="btn btn-xs btn-accent">
+                    View
+                </button></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+
+<script>
+
+    const new_button = `<label for="my_modal" class="btn btn-sm" 
+                                hx-get="{% url 'new_call'  %}" hx-trigger="click" 
+                                hx-target="#new_call_form" hx-swap="innerHTML">New Call</label>
+
+                            <input type="checkbox" id="my_modal" class="modal-toggle" />
+                            <div class="modal" role="dialog">
+                                <div class="modal-box w-11/12 max-w-5xl">
+                                    <div id="new_call_form"></div>
+                                </div>
+                            </div>`
+
+    new DataTable('#calls-table', {
+        responsive: true,
+
+        buttons: [
+            {
+                extend: 'collection',
+                text: 'Export',
+                buttons: [
+                    'csv', 'excel', 'copy', 'pdf'
+                ],
+            },
+            {
+                extend: 'collection',
+                text: 'Columns',
+                buttons: [
+                    'columnsToggle'
+                ]
+            }
+
+        ],
+
+        layout: {
+            topEnd: {
+                div: {
+                    html: new_button
+                },
+            }, 
+            topStart: ['search', 'buttons'],
+            bottomStart: ['pageLength', 'info'],
+            bottomEnd: 'paging'
+        }
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,15 @@
+django==5.1.1
+django-appconf
+django-ckeditor==6.7.0
+django-colorfield
+django-compressor
+django-js-asset
+django-storages
+docutils
+jmespath
+gunicorn
+python-dateutil
+pytz
+urllib3
+python-dotenv
+django-ckeditor-5
