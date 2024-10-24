@@ -26,7 +26,7 @@ class Equipment(models.Model):
     installed_by = models.CharField(verbose_name='Installed By', null=True, blank=True, max_length=100)
     
     decommissioned_on = models.DateField(verbose_name='Decommission Date', null=True, blank=True, max_length=100)
-    extra_notes = CKEditor5Field('Notes', config_name='extends')
+    extra_notes = CKEditor5Field('Notes', config_name='extends', null=True, blank=True)
 
     def path(self, filename):  
         date = str(datetime.now().strftime("%d.%m.%Y"))
@@ -75,7 +75,7 @@ class ServiceCall(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.SET_NULL, related_name='equipment_service_call', null=True)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, related_name='status_service_call', null=True)
     system_part = models.ForeignKey(Part, on_delete=models.SET_NULL, related_name='part_service_call', null=True)
-    user_notes = CKEditor5Field('User\'s Notes', null=True, blank=True)
+    user_notes = CKEditor5Field('User\'s Notes', config_name='extends', null=True, blank=True)
     service_notes = models.CharField('Service\'s Notes', null=True, blank=True, max_length=1000)
     
     def __str__(self):

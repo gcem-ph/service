@@ -6,7 +6,7 @@
 <div class="grid grid-cols-3 mt-24 px-10 justify-items-center gap-6">
     {% for equipment in context %}
     <div class="card bg-base-100 w-full shadow-xl m-5">
-        <a href="{% url 'call_details' service_call_id=equipment.id.id %}">
+        <a href="{% url 'call_details' service_call_id=equipment_id.id %}">
             <div class="card-body">
             <div class="w-full flex justify-between">
                 <h1 class="card-title">{{ equipment.equipment }}</h1>

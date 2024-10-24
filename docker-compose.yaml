@@ -4,8 +4,9 @@ services:
     image: service
     command: gunicorn --workers=3 --bind=:8000 --env DJANGO_SETTINGS_MODULE=configs.settings configs.wsgi
     volumes:
-      - /:/web/media/
-      # - /cloud/service-documents/:/web/media/
+      #- /:/web/media/
+      - /cloud/service-documents/:/web/media/
+      - ./db.sqlite3:/web/db.sqlite3
     ports:
       - 8000:8000
     env_file:
